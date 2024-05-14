@@ -101,7 +101,7 @@ void Interface::cycle_menu() {
 }
 
 void Interface::mod_counter(int *counter, int nbItems, int val) {
-  Serial.println(*counter);
+  // Serial.println(*counter);
   *counter += val;
   if (*counter < 0) {
     *counter = nbItems - 1;  // roll over to last item

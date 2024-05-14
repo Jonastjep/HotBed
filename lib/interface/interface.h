@@ -2,6 +2,17 @@
 #include <LiquidCrystal.h>
 #include <Rotary.h>
 
+class Button {
+  private:
+      bool _state;
+      int _pin;
+
+  public:
+    Button(int pin);
+    void begin();
+    bool isReleased();
+};
+
 class Interface{
 private:
   Rotary r = Rotary(11, 12); 
@@ -44,7 +55,7 @@ private:
   unsigned long timerMillis;
   
 public:
-  int setTemp = 50;
+  int setTemp = 20;
   bool running = false;
 
   Interface();
@@ -63,13 +74,4 @@ public:
 };
 
 
-class Button {
-  private:
-      bool _state;
-      int _pin;
 
-  public:
-    Button(int pin);
-    void begin();
-    bool isReleased();
-};

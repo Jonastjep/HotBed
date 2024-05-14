@@ -8,7 +8,7 @@ int tempPin = 0;
 
 float avgTemp;
 
-float startDutyCycle = 0.999;
+float startDutyCycle = 0.99;
 
 Interface ctrl = Interface();
 TempSens thermistor = TempSens(tempPin);
@@ -17,41 +17,49 @@ PWM pwm = PWM(pwmPin, 128, startDutyCycle); //128 gives a period of 500ms
 unsigned int plt_time = 500;
 unsigned long plt_timer = 0;
 
-unsigned int pid_time = 500;
+unsigned int pid_time = 200;
 unsigned long pid_timer = 0;
 
-int kp = 170; int ki = 0.5; int kd = 2250;
-
-PID pid = PID(kp,ki,kd,0,1);
+int kp = 0.1; int ki = 0.1; int kd = 0.1;
+PID pid = PID(kp,ki,kd,0.1,0.9);
 
 void setup() {
   Serial.begin(9600);
+
+  avgTemp = thermistor.read_C();
+  for(int i = 0; i < 50; i++){
+    avgTemp = avgTemp*0.9 + thermistor.read_C()*0.1; // each new measurement contributes only 1/10th
+    delay(5);
+  }
+
   ctrl.begin();
   pwm.begin();
 
   // Starting the rolling average of temperatures
-  avgTemp = thermistor.read_C();
-  for(int i = 0; i < 50; i++){
-    avgTemp = avgTemp*0.9 + thermistor.read_C()*0.1; // each new measurement contributes only 1/10th
-  }
+  
 }
 
 void loop() {
   ctrl.run();
   avgTemp = avgTemp*0.9 + thermistor.read_C()*0.1;
+  delay(5);
 
   if(ctrl.running && (millis()-pid_timer) > pid_time){
-    double control = pid.compute(ctrl.setTemp, avgTemp);
+    double control = pid.compute((float)ctrl.setTemp, avgTemp);
     pwm.modify_dutyCycle(0.999-control);
     pwm.run();
     pid_timer = millis();
+  }else{
+    pwm.stop();
   }
   
   if ((millis()-plt_timer) > plt_time){
     Serial.print("Temperature: ");
     Serial.print(avgTemp);
     Serial.print(",Set temp:");
-    Serial.println(ctrl.setTemp);
+    Serial.print(ctrl.setTemp);
+    Serial.print(",Set temp:");
+    Serial.println(pwm.dutyCycle);
     plt_timer = millis();
 	}
 }

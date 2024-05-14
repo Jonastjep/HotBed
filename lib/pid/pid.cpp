@@ -22,7 +22,11 @@ float PID::compute(float setVal, float currentVal){
   double PID_p = _Kp * error;
   double PID_i = _PID_integral + _Ki * error * (current_time-_time);
   double PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
-
+  Serial.print(PID_p);
+  Serial.print("  ");
+  Serial.print(PID_i);
+  Serial.print("  ");
+  Serial.println(PID_d);
   double control = PID_p + PID_i + PID_d;
 
   if(control > _maxVal){
@@ -34,6 +38,8 @@ float PID::compute(float setVal, float currentVal){
 
   _e_prev = error;
   _time = current_time;
+
+  Serial.println(control);
 
   return control;
 }
@@ -74,12 +80,16 @@ void PWM::run(){
 	digitalWrite(_pin, _signal);
 }
 
+void PWM::stop(){
+  _signal = LOW;
+}
+
 TempSens::TempSens(int pin){
   _pin = pin;
 
   //thermistor circuit
-  float _R1 = 10000; //voltage divider resitor value
-  float _c1 = 1.009249522e-03, _c2 = 2.378405444e-04, _c3 = 2.019202697e-07; //constants based on the thermistor
+  _R1 = 10000; //voltage divider resitor value
+  _c1 = 1.009249522e-03, _c2 = 2.378405444e-04, _c3 = 2.019202697e-07; //constants based on the thermistor
 }
 
 float TempSens::read_C(){
@@ -91,7 +101,7 @@ float TempSens::read_C(){
   logR2 = log(R2);
   T = (1.0 / (_c1 + _c2*logR2 + _c3*logR2*logR2*logR2));
   Tc = T - 273.15;
-
+  
   return Tc;
 }
 
