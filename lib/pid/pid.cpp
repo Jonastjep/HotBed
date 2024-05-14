@@ -1,22 +1,48 @@
 #include <Arduino.h>
 #include <pid.h>
 
-PID::PID(double Kp = 1.5, double Ki = 0.05, double Kd = 0.1, float minTemp = 20, float maxTemp = 100){
+PID::PID(double Kp = 1.5, double Ki = 0.05, double Kd = 0.1, float minVal = 0, float maxVal = 0.999){
   // temperature limits
-    _minTemp = minTemp;
-    _maxTemp = maxTemp;
+    _minVal = minVal;
+    _maxVal = maxVal;
 
     //PID constants
     _Kp = Kp;
     _Ki = Ki;
     _Kd = Kd;
+
+    _time = millis();
+}
+
+float PID::compute(float setVal, float currentVal){
+  float error = setVal - currentVal;
+
+  double current_time = millis();
+
+  double PID_p = _Kp * error;
+  double PID_i = _PID_integral + _Ki * error * (current_time-_time);
+  double PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
+
+  double control = PID_p + PID_i + PID_d;
+
+  if(control > _maxVal){
+    control = _maxVal;
+  }
+  if(control < _minVal){
+    control = _minVal;
+  }
+
+  _e_prev = error;
+  _time = current_time;
+
+  return control;
 }
 
 //period of 128 gives 500 ms period.
-PWM::PWM(int pin, float period = 128, float dutyCycle = 0.5){
+PWM::PWM(int pin, float period = 128, float dCycle = 0.5){
   _pin = pin;
   _period = period;
-  _dutyCycle = dutyCycle;
+  dutyCycle = dCycle;
   _lastChange = 0;
   _signal = LOW;
 }
@@ -25,13 +51,14 @@ void PWM::begin(){
   pinMode(_pin, OUTPUT);
 }
 
-void PWM::modify_dutyCycle(float dutyCycle){
-  _dutyCycle = dutyCycle;
+void PWM::modify_dutyCycle(float dCycle){
+  dutyCycle = dCycle;
 }
 
 void PWM::run(){
-  unsigned int onTime = _period * _dutyCycle;
-	unsigned int offTime = _period * (1 - _dutyCycle);
+  unsigned int onTime = _period * dutyCycle;
+	unsigned int offTime = _period * (1 - dutyCycle);
+
 	if (_signal == HIGH) {
 	if (millis() - _lastChange > onTime) {
 		_signal = LOW;

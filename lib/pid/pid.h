@@ -2,18 +2,23 @@
 
 class PID{
   public:
-    PID(double Kp, double Ki, double Kd, float minTemp, float maxTemp);
-    void begin();
+    PID(double Kp, double Ki, double Kd, float minVal, float maxVal);
+    float compute(float setVal, float currentVal);
 
   private:
     // temperature limits
-    float _minTemp;
-    float _maxTemp;
+    float _minVal;
+    float _maxVal;
 
     //PID constants
     double _Kp;
     double _Ki;
     double _Kd;
+
+    double _e_prev = 0;
+    double _PID_integral = 0;
+
+    double _time;
     
 };
 
@@ -32,14 +37,15 @@ class TempSens{
 
 class PWM{
   public:
-    PWM(int pin, float period, float dutyCycle);
+    float dutyCycle;
+
+    PWM(int pin, float period, float dCycle);
     void begin();
-    void modify_dutyCycle(float dutyCycle);
+    void modify_dutyCycle(float dCycle);
     void run();
 
   private:
     int _pin;
-    float _dutyCycle;
     unsigned int _period;
     unsigned long _lastChange;
     bool _signal;

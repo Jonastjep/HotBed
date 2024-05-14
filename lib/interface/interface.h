@@ -36,17 +36,17 @@ private:
 
   int timeRem[3] = {0,0,0};
 
-  int setTemp = 50;
   int menuTemp_items = 120;
   int menuTemp_counter = 60;
-
-  bool running = false;
 
   unsigned long startMillis;
   unsigned long currentMillis;
   unsigned long timerMillis;
   
 public:
+  int setTemp = 50;
+  bool running = false;
+
   Interface();
   void begin();
   void main_menu();
