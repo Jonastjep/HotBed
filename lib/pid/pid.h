@@ -43,6 +43,7 @@ class PWM{
     void begin();
     void modify_dutyCycle(float dCycle);
     void run();
+    void stop();
 
   private:
     int _pin;
