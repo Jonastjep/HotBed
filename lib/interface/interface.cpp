@@ -11,7 +11,9 @@ Interface::Interface(){
 
 }
 
-void Interface::begin(){
+void Interface::begin(int curTemp){
+  currentTemp = curTemp;
+
   button_yel.begin();
   button_blu.begin();
   button_pnk.begin();
@@ -95,7 +97,7 @@ void Interface::cycle_menu() {
   lcd.noBlink();
   lcd.clear();
   lcd.setCursor(0, 0);  //(col, row)
-  lcd.print("Temp: " + String(setTemp) + "/" + String(setTemp));
+  lcd.print("Temp: " + String(currentTemp) + "/" + String(setTemp));
   lcd.setCursor(0, 1);  // 2nd row
   lcd.print("Timer: " + String(timeRem[0]) + ":" + String(timeRem[1]) + ":" + String(timeRem[2]));
 }
@@ -148,7 +150,9 @@ void Interface::reset_settings(){
   isTimer = false;
 }
 
-void Interface::run(){
+void Interface::run(int curTemp){
+
+  currentTemp = curTemp;
 
   unsigned char result = r.process(); //finds out in what direction the rotary encoder has been turned
   if (result) {

@@ -57,9 +57,10 @@ private:
 public:
   int setTemp = 20;
   bool running = false;
+  int currentTemp;
 
   Interface();
-  void begin();
+  void begin(int curTemp);
   void main_menu();
   void temp_menu();
   void timer_menu();
@@ -70,7 +71,7 @@ public:
   void mod_counter(int *counter, int nbItems, int val);
   void reset_counters();
   void reset_settings();
-  void run();
+  void run(int curTemp);
 };
 
 

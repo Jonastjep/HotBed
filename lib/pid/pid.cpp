@@ -15,22 +15,22 @@ PID::PID(double Kp = 1.5, double Ki = 0.05, double Kd = 0.1, float minVal = 0, f
 }
 
 float PID::compute(float setVal, float currentVal){
-  float error = setVal - currentVal;
+  float error =  setVal-currentVal;
 
   double current_time = millis();
 
   _PID_p = _Kp * error;
   // _PID_i = _PID_i + _Ki * error * (current_time-_time);
-  // _PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
+  _PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
 
   _PID_i = 0;
-  _PID_d = 0;
+  // _PID_d = 0;
   
-  Serial.print(_PID_p);
-  Serial.print("  ");
-  Serial.print(_PID_i);
-  Serial.print("  ");
-  Serial.println(_PID_d);
+  // Serial.print(_PID_p);
+  // Serial.print("  ");
+  // Serial.print(_PID_i);
+  // Serial.print("  ");
+  // Serial.println(_PID_d);
   double control = _PID_p + _PID_i + _PID_d;
 
   if(control > _maxVal){
@@ -43,12 +43,10 @@ float PID::compute(float setVal, float currentVal){
   _e_prev = error;
   _time = current_time;
 
-  Serial.println(control);
-
   return control;
 }
 
-//period of 128 gives 500 ms period.
+//period of 128 gives 7.8Hz signal.
 PWM::PWM(int pin, float period = 128, float dCycle = 0.5){
   _pin = pin;
   _period = period;
