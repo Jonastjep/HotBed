@@ -19,15 +19,19 @@ float PID::compute(float setVal, float currentVal){
 
   double current_time = millis();
 
-  double PID_p = _Kp * error;
-  double PID_i = _PID_integral + _Ki * error * (current_time-_time);
-  double PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
-  Serial.print(PID_p);
+  _PID_p = _Kp * error;
+  // _PID_i = _PID_i + _Ki * error * (current_time-_time);
+  // _PID_d = _Kd *  (error - _e_prev)/(current_time-_time);
+
+  _PID_i = 0;
+  _PID_d = 0;
+  
+  Serial.print(_PID_p);
   Serial.print("  ");
-  Serial.print(PID_i);
+  Serial.print(_PID_i);
   Serial.print("  ");
-  Serial.println(PID_d);
-  double control = PID_p + PID_i + PID_d;
+  Serial.println(_PID_d);
+  double control = _PID_p + _PID_i + _PID_d;
 
   if(control > _maxVal){
     control = _maxVal;
@@ -81,7 +85,7 @@ void PWM::run(){
 }
 
 void PWM::stop(){
-  _signal = LOW;
+  digitalWrite(_pin, LOW);
 }
 
 TempSens::TempSens(int pin){
@@ -94,7 +98,7 @@ TempSens::TempSens(int pin){
 
 float TempSens::read_C(){
   int Vo;
-  float logR2, R2, T, Tc, Tf;
+  float logR2, R2, T, Tc;
 
   Vo = analogRead(_pin);
   R2 = _R1 * (1023.0 / (float)Vo - 1.0);

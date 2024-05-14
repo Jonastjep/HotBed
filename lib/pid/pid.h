@@ -16,7 +16,9 @@ class PID{
     double _Kd;
 
     double _e_prev = 0;
-    double _PID_integral = 0;
+    double _PID_p = 0;
+    double _PID_i = 0;
+    double _PID_d = 0;
 
     double _time;
     

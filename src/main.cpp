@@ -20,7 +20,7 @@ unsigned long plt_timer = 0;
 unsigned int pid_time = 200;
 unsigned long pid_timer = 0;
 
-int kp = 0.1; int ki = 0.1; int kd = 0.1;
+double kp = 0.001, ki = 0.1, kd = 0.1;
 PID pid = PID(kp,ki,kd,0.1,0.9);
 
 void setup() {
@@ -49,8 +49,10 @@ void loop() {
     pwm.modify_dutyCycle(0.999-control);
     pwm.run();
     pid_timer = millis();
-  }else{
+  }else if(!ctrl.running){
     pwm.stop();
+  }else{
+    pwm.run();
   }
   
   if ((millis()-plt_timer) > plt_time){
